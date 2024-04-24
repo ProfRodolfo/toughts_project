@@ -5,18 +5,20 @@ const FileStore = require("session-file-store")(session);
 const flash = require("express-flash");
 
 const app = express();
-const conn = require("./db/conn")
 
-//Models
-const Tough = require("./models/Tought")
+const conn = require("./db/conn");
 
-//routes
+// Models
+const Tought = require("./models/Tought");
+
+// routes
 const toughtsRoutes = require("./routes/toughtsRoutes");
-const ToughController = require("./controllers/ToughtController");
 const authRoutes = require("./routes/authRoutes");
+const ToughController = require("./controllers/ToughtController");
 
 app.engine("handlebars", exphbs.engine());
 app.set("view engine", "handlebars");
+
 app.use(
   express.urlencoded({
     extended: true,
@@ -24,7 +26,6 @@ app.use(
 );
 
 app.use(express.json());
-app.use(express.static("public"));
 
 //session middleware
 app.use(
@@ -46,23 +47,27 @@ app.use(
   }),
 )
 
-// fash messages
+// flash messages
 app.use(flash());
 
-app.use((req, res, next) =>{
-  console.log(req.session.userid)
+app.use(express.static("public"));
 
-  if (req.session.userid){
+// set session to res
+app.use((req, res, next) => {
+  // console.log(req.session)
+  console.log(req.session.userid);
+
+  if (req.session.userid) {
     res.locals.session = req.session;
   }
 
   next();
 });
 
-
-app.use("/", authRoutes);
-app.get("/", ToughController.showToughts);
 app.use("/toughts", toughtsRoutes);
+app.use("/", authRoutes);
+
+app.get("/", ToughController.showToughts);
 
 conn
   .sync()
