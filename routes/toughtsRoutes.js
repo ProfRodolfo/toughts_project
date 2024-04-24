@@ -3,6 +3,7 @@ const router = express.Router();
 
 const ToughtController = require("../controllers/ToughtController");
 
+router.get()
 router.get("/", ToughtController.showToughts);
 
 module.exports = router;
